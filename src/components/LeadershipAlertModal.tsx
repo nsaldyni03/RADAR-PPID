@@ -98,9 +98,16 @@ export function LeadershipAlertModal({
         }),
       });
 
-      const data = (await response.json()) as { log?: LeadershipAlertLog; error?: string };
-      if (!response.ok || !data.log) {
-        throw new Error(data.error || 'Gagal mencatat pengiriman peringatan pimpinan.');
+      const rawText = await response.text();
+      let data: { log?: LeadershipAlertLog; error?: string } | null = null;
+      try {
+        data = JSON.parse(rawText) as { log?: LeadershipAlertLog; error?: string };
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok || !data?.log) {
+        throw new Error(data?.error || 'Gagal mencatat pengiriman peringatan pimpinan.');
       }
 
       onAlertSent(data.log);

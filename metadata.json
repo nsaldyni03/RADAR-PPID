@@ -2,5 +2,7 @@
   "name": "RADAR-PPID — BTP Kelas I Surabaya",
   "description": "AI Agent Registrasi Tiket, Disposisi, Pemantau SLA, & Draf Respons Layanan Informasi Publik untuk Balai Teknik Perkeretaapian Kelas I Surabaya.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

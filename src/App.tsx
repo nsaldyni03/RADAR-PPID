@@ -132,15 +132,22 @@ export default function App() {
         }),
       });
 
-      const payload = (await response.json()) as Partial<RadarPpidPayload> & {
-        error?: string;
-      };
+      const rawText = await response.text();
+      let payload: (Partial<RadarPpidPayload> & { error?: string }) | null = null;
+      try {
+        payload = JSON.parse(rawText) as Partial<RadarPpidPayload> & { error?: string };
+      } catch {
+        payload = null;
+      }
 
-      if (!response.ok || !Array.isArray(payload.daftar_tiket)) {
-        throw new Error(
-          payload.error ||
-            'Layanan AI sedang sibuk atau mengalami gangguan sementara. Silakan tekan tombol "Coba lagi".',
-        );
+      if (!response.ok || !payload || !Array.isArray(payload.daftar_tiket)) {
+        const fallbackMsg =
+          response.status === 404
+            ? 'Endpoint API (/api/ppid/tindak-lanjut) tidak ditemukan di server hosting (404). Pastikan fungsi serverless /api ikut ter-deploy.'
+            : response.status === 413
+              ? 'Ukuran permintaan atau lampiran terlalu besar untuk server hosting (413). Kurangi ukuran berkas lampiran lalu coba lagi.'
+              : 'Layanan AI sedang sibuk atau mengalami gangguan sementara. Silakan tekan tombol "Coba lagi".';
+        throw new Error(payload?.error || fallbackMsg);
       }
 
       setDaftarTiket(payload.daftar_tiket);
